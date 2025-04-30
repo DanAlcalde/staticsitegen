@@ -24,3 +24,5 @@ class TextNode:
 
     def __hash__(self):
         return hash((self.text, self.text_type))
+    
+

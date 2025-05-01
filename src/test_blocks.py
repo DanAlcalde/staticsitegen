@@ -1,6 +1,6 @@
 import unittest
 
-from blocks import markdown_to_blocks, block_to_block_type, BlockType
+from blocks import markdown_to_blocks, block_to_block_type, BlockType, markdown_to_html_node
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_empty_string(self):
@@ -59,6 +59,68 @@ This is the same paragraph on a new line
         # Test invalid ordered list (missing number)
         self.assertEqual(block_to_block_type("item 1\n2. item 2"), BlockType.PARAGRAPH)
         self.assertEqual(block_to_block_type("1. item 1\n3. item 2"), BlockType.PARAGRAPH)
+
+    def test_paragraphs(self):
+        md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+        html,
+        "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+    )
+
+    def test_codeblock(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+        html,
+        "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+    )
+    
+    
+    def test_headings(self):
+        md = """
+# Heading 1
+
+## Heading 2
+
+### Heading 3 with **bold**
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+        html,
+        "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3 with <b>bold</b></h3></div>"
+    )
+
+    def test_quotes(self):
+        md = """
+    > This is a quote
+    > with multiple lines
+    > and **formatting**
+    """
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><blockquote>This is a quote with multiple lines and <b>formatting</b></blockquote></div>"
+    )
+
 
 
 

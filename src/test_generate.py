@@ -12,7 +12,6 @@ class TestGenerate(unittest.TestCase):
         with self.assertRaises(Exception):
             extract_title("This is not a title")
     
-    
 
 
 

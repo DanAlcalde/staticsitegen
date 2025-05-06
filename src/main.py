@@ -1,5 +1,6 @@
 from textnode import TextNode, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from generate import generate_page
 import shutil
 import os
 
@@ -24,8 +25,7 @@ def main():
     os.mkdir("public")
     copy_from_dir("static", "public")
     
-    test = TextNode("This is anchor text", TextType.LINK_TEXT, "https://www.boot.dev")
-    print(test)
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 if __name__ == "__main__":
     main()

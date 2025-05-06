@@ -22,11 +22,13 @@ class LeafNode(HTMLNode):
         super().__init__(tag=tag, value=value, props=props)
     
     def to_html(self):
-        if self.value == None:
+        if self.tag == "img":
+            return f'<img{self.props_to_html()} />'
+        if self.value is None:
             raise ValueError("LeafNode requires a value")
         if self.tag is None:
             return f"{self.value}"
-        return f"<{self.tag}>{self.value}{self.props_to_html()}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
 class ParentNode(HTMLNode):
     def __init__(self, tag=None, children=None, props=None):

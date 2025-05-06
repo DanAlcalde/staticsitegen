@@ -1,5 +1,7 @@
 from convert import text_node_to_html_node, text_to_textnodes
 from htmlnode import ParentNode, LeafNode, HTMLNode
+from blocks import markdown_to_blocks, block_to_block_type, text_to_children, markdown_to_html_node
+from textnode import TextNode, TextType
 import os
 
 
@@ -23,10 +25,15 @@ def generate_page(from_path, template_path, dest_path):
          template = f.read()
     if not template:
         raise Exception("Empty template file.")
-    text = text_to_textnodes(markdown)
-    html_nodes = [text_node_to_html_node(node) for node in text]
+
+    html_node = markdown_to_html_node(markdown)
+    html = html_node.to_html()
+   # blocks = markdown_to_blocks(markdown)
+
+    # text_nodes = [text_to_textnodes(block) for block in blocks]
+    # html_nodes = [text_node_to_html_node(node) for nodes in text_nodes for node in nodes]
     title = extract_title(markdown)
-    html_result = template.replace("{{ Title }}", title).replace("{{ Content }}", ParentNode(html_nodes).to_html()) 
+    html_result = template.replace("{{ Title }}", title).replace("{{ Content }}", html) 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
-         f.write(html_result)    
+         f.write(html_result)       

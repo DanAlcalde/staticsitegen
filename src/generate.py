@@ -28,12 +28,9 @@ def generate_page(from_path, template_path, dest_path):
 
     html_node = markdown_to_html_node(markdown)
     html = html_node.to_html()
-   # blocks = markdown_to_blocks(markdown)
-
-    # text_nodes = [text_to_textnodes(block) for block in blocks]
-    # html_nodes = [text_node_to_html_node(node) for nodes in text_nodes for node in nodes]
     title = extract_title(markdown)
     html_result = template.replace("{{ Title }}", title).replace("{{ Content }}", html) 
+    html_result = html_result.replace('href="/', 'href="{basepath}').replace('src="/', 'src="{basepath}')
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
          f.write(html_result)       

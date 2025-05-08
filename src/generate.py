@@ -2,6 +2,7 @@ from convert import text_node_to_html_node, text_to_textnodes
 from htmlnode import ParentNode, LeafNode, HTMLNode
 from blocks import markdown_to_blocks, block_to_block_type, text_to_children, markdown_to_html_node
 from textnode import TextNode, TextType
+
 import os
 
 
@@ -15,7 +16,7 @@ def extract_title(markdown):
     else:
         raise Exception("No title found in the markdown file.")
     
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath="/"):
     print(f"Generating page from {from_path} using template {template_path} to {dest_path}")
     with open(from_path) as f:
          markdown = f.read()
@@ -30,18 +31,18 @@ def generate_page(from_path, template_path, dest_path):
     html = html_node.to_html()
     title = extract_title(markdown)
     html_result = template.replace("{{ Title }}", title).replace("{{ Content }}", html) 
-    html_result = html_result.replace('href="/', 'href="{basepath}').replace('src="/', 'src="{basepath}')
+    html_result = html_result.replace('href="/', f'href="{basepath}').replace('src="/', f'src="{basepath}')
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
          f.write(html_result)       
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath="/"):
     for filename in os.listdir(dir_path_content):
         from_path = os.path.join(dir_path_content, filename)
         dest_path = os.path.join(dest_dir_path, filename)
         if os.path.isfile(from_path):
             if filename.endswith(".md"):
-                generate_page(from_path, template_path, dest_path.replace(".md", ".html"))
+                generate_page(from_path, template_path, dest_path.replace(".md", ".html"), basepath)
                
         else:
-            generate_pages_recursive(from_path, template_path, dest_path)
+            generate_pages_recursive(from_path, template_path, dest_path, basepath)
